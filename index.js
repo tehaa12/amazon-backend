@@ -11,6 +11,11 @@ const app = express();
 app.use(cors()); // Enable CORS for all routes
 app.use(bodyParser.json()); // Parse incoming requests
 
+// Root route
+app.get("/", (req, res) => {
+  res.send("Welcome to the Amazon API!");
+});
+
 // Routes
 const productsRouter = require("./routes/shopProducts");
 const ordersRouter = require("./routes/checkoutOrders");
@@ -23,7 +28,6 @@ app.post("/create-payment-intent", async (req, res) => {
   const { amount, currency } = req.body;
 
   try {
-    // Create a payment intent with the provided amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency,

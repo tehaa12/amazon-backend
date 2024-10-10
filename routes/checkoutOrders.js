@@ -1,19 +1,24 @@
 const express = require("express");
-const router = express.Router();
-const { db } = require("../firebase"); // Import your Firestore instance
+const { db } = require("../firebase"); // Use the correct path for firebase.js in the backend
+const { collection, addDoc } = require("firebase/firestore");
 
-// Place an order
+const router = express.Router(); // Create a new router
+
+// Example route for placing an order
 router.post("/", async (req, res) => {
-  const orderData = req.body;
+  const { userId, items } = req.body;
+
   try {
-    // Save the order to Firestore or your database
-    // (This example assumes you have set up Firestore)
-    await db.collection("orders").add(orderData);
-    res.status(201).json({ message: "Order placed successfully" });
+    const docRef = await addDoc(collection(db, "orders"), {
+      userId,
+      items,
+      createdAt: new Date(),
+    });
+    res.status(201).json({ orderId: docRef.id });
   } catch (error) {
-    console.error("Error placing order:", error);
-    res.status(500).json({ error: "Failed to place order" });
+    console.error("Error saving order:", error);
+    res.status(500).json({ error: "Failed to save order" });
   }
 });
 
-module.exports = router;
+module.exports = router; // Export the router
